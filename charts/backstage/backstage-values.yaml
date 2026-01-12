@@ -229,12 +229,12 @@ upstream:
 #                 timeout:
 #                   minutes: 2
 #
-#      integrations:
-#        gitlab:
-#        - host: ${GITLAB_HOST}
-#          baseUrl: https://${GITLAB_HOST}
-#          apiBaseUrl: https://${GITLAB_HOST}/api/v4
-#          token: ${GITLAB_TOKEN}
+#     integrations:
+#       gitlab:
+#       - host: ${GITLAB_HOST}
+#         baseUrl: https://${GITLAB_HOST}
+#         apiBaseUrl: https://${GITLAB_HOST}/api/v4
+#         token: ${GITLAB_TOKEN}
 
       permission:
         enabled: false
