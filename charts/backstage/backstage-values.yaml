@@ -2,7 +2,7 @@ global:
   auth:
     backend:
       enabled: true
-  clusterRouterBase: apps.cluster-hzfgz.dynamic.redhatworkshops.io
+  clusterRouterBase: {{ rhads_dh_ingress_domain }}
   dynamic:
     includes:
       - dynamic-plugins.default.yaml
@@ -125,31 +125,31 @@ global:
 upstream:
   backstage:
     image:
-      registry: quay.io
-      repository: rhdh/rhdh-hub-rhel9
-      tag: '1.8-164'
+      registry: {{ rhads_dh_quay_backstage_registry }}
+      repository: {{ rhads_dh_quay_backstage_image }}
+      tag: '{{ rhads_dh_quay_backstage_image_tag }}'
       pullSecrets:
       - redhat-gpte-devhub-pull-secret
-    
+
     extraEnvVarsSecrets:
       - backstage-env-secret
     extraEnvVars:
       - name: BACKEND_URL
-        value: https://backstage-backstage.apps.cluster-hzfgz.dynamic.redhatworkshops.io
+        value: {{ rhads_dh_backstage_url }}
       - name: ARGOCD_URL
-        value: https://argocd-server-tssc-gitops.apps.cluster-hzfgz.dynamic.redhatworkshops.io
+        value: {{ rhads_dh_argocd_url }}
       - name: AUTH_OIDC_METADATA_URL
-        value: https://sso.apps.cluster-hzfgz.dynamic.redhatworkshops.io/realms/sso/.well-known/openid-configuration
+        value: {{ rhads_dh_auth_oidc_metadata_url }}
       - name: KEYCLOAK_LOGIN_REALM
-        value: sso
+        value: {{ rhads_dh_keycloak_login_realm }}
       - name: KEYCLOAK_REALM
-        value: sso
+        value: {{ rhads_dh_keycloak_realm }}
       - name: KEYCLOAK_BASE_URL
-        value: https://sso.apps.cluster-hzfgz.dynamic.redhatworkshops.io
+        value: {{ rhads_dh_keycloak_base_url }}
       - name: GITLAB_HOST
-        value: gitlab-gitlab.apps.cluster-hzfgz.dynamic.redhatworkshops.io
+        value: {{ rhads_dh_gitlab_host }}
       - name: QUAY_URL
-        value: https://quay-hzfgz-1.apps.cluster-hzfgz.dynamic.redhatworkshops.io
+        value: {{ rhads_dh_quay_url }}
       - name: NODE_TLS_REJECT_UNAUTHORIZED
         value: "0"
 
@@ -197,8 +197,12 @@ upstream:
           origin: ${BACKEND_URL}
       catalog:
 #         locations:
-#         - target: https://gitlab-gitlab.apps.cluster-hzfgz.dynamic.redhatworkshops.io/rhdh/build-secured-dev-workflows-idp-configuration/blob/main/all-locations.yaml
+{% for target in rhads_dh_developer_hub_catalog_url %}
+{% for file in target.file %}
+#         - target: https://{{ rhads_dh_gitlab_host }}/{{ target.group }}/{{ target.repository }}/blob/{{ target.revision }}/{{ file }}
 #           type: url
+{% endfor %}
+{% endfor %}
 #         rules:
 #         - allow:
 #           - Component
@@ -226,13 +230,13 @@ upstream:
 #                   minutes: 2
 #
 
-    # integrations:
-    #   gitlab:
-    #     - host: ${GITLAB_HOST}
-    #       baseUrl: https://${GITLAB_HOST}
-    #       apiBaseUrl: https://${GITLAB_HOST}/api/v4
-    #       token: ${GITLAB_TOKEN}
-            
+     # integrations:
+     #   gitlab:
+     #     - host: ${GITLAB_HOST}
+     #       baseUrl: https://${GITLAB_HOST}
+     #       apiBaseUrl: https://${GITLAB_HOST}/api/v4
+     #       token: ${GITLAB_TOKEN}
+
       permission:
         enabled: false
       proxy:
@@ -285,7 +289,7 @@ upstream:
 
 route:
   enabled: true
-  host: backstage-backstage.apps.cluster-hzfgz.dynamic.redhatworkshops.io
+  host: {{ rhads_dh_backstage_host }}
   tls:
     enabled: true
     termination: "edge"
