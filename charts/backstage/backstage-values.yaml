@@ -195,7 +195,7 @@ upstream:
               options:
                 subject: legacy-default-config
                 secret: "${BACKEND_SECRET}"
-          - type: static
+            - type: static
               options:
                 subject: software-template-trigger
                 token: ${AUTOMATION_SECRET}                
